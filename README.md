@@ -10,3 +10,5 @@ They are focused in my SSD (cache) + HDD (storage) installation, but it can be u
 format the disks, and install de essentials packages in the new root.
 2. **02-install.sh**: Configure all the personal stuffs in the installation as the time zone, users and passwords,
 and set up the EFISTUB as the bootloader.
+3. **05-security**: This script install and configure some security features as the firewall, antivirus, etc.
+and also install some useful packages for penteration testing.

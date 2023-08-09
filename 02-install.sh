@@ -138,6 +138,13 @@ main(){
 
 	sed -i 's/# %wheel ALL=(ALL:ALL)/%wheel ALL=(ALL:ALL)/g' /etc/sudoers
 
+	# Enable services
+	echo "-----------------------------------------------------"
+	echo "Enabling services..."
+	echo "-----------------------------------------------------"
+
+	systemctl enable NetworkManager
+
 	# Finish installation
 	echo "-----------------------------------------------------"
 	echo "Installation finished"

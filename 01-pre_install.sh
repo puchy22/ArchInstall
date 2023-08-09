@@ -452,7 +452,7 @@ main(){
 	echo "Installing essential packages..."
 	echo "-----------------------------------------------------"
 
-	pacstrap -K /mnt base base-devel linux linux-firmware neovim git
+	pacstrap -K /mnt base base-devel linux linux-firmware neovim git networkmanager
 
 	# Generate fstab
 	echo "-----------------------------------------------------"
