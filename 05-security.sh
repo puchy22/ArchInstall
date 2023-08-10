@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Function to configure the firewall
 
@@ -92,6 +92,9 @@ main(){
       "wireshark-qt"    # Network protocol analyzer
       "bitwarden"       # Password manager
 		"nftables"        # Firewall
+		"clamav"          # Antivirus
+		"john"            # Password cracker
+		"hashcat"         # Password cracker
    )
 
    # Install the software
@@ -137,6 +140,26 @@ main(){
 				;;
 		esac
 	done
+
+	# Configure the antivirus
+
+	echo "-----------------------------------------------------"
+	echo "Configuring the antivirus..."
+	echo "-----------------------------------------------------"
+
+	# Update the antivirus database
+
+	freshclam
+
+	# Enable the antivirus
+
+	systemctl enable clamav-freshclam.service
+	systemctl enable clamav-daemon.service
+
+	# Start the antivirus
+
+	systemctl start clamav-freshclam.service
+	systemctl start clamav-daemon.service
 
 }
 
