@@ -60,6 +60,7 @@ main(){
       "kitty"			         # Terminal emulator
       "thunar"			         # File manager
       "gvfs"                  # Virtual file system (Thunar)
+      "thunar-archive-plugin" # Adds archive operations to the Thunar file context menus
       "xarchiver"             # Archive manager (Thunar)
       "thunar-volman"         # Thunar volume manager (Thunar)
       "rsync"                 # File sync
@@ -174,7 +175,7 @@ main(){
 
    podman system reset
 
-   sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 username
+   sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 $USER
 
    podman system migrate
 

@@ -103,6 +103,8 @@ main(){
 	# Modify the kernel parameters
 	sudo sed -i "s/MODULES=()/MODULES=(${kernel_module})/" /etc/mkinitcpio.conf
 
+	sudo sed -i "s/ kms//" /etc/mkinitcpio.conf
+
    # Make a list of the software to install
 
    software=(
@@ -154,14 +156,6 @@ main(){
 
 	sudo systemctl enable lightdm.service
 
-	# Enable the screen locker
-
-	echo "-----------------------------------------------------"
-	echo "Enabling the screen locker..."
-	echo "-----------------------------------------------------"
-
-	sudo systemctl enable lightdm-lock.service
-
 	# Setting the keyboard layout
 
 	echo "-----------------------------------------------------"
@@ -178,10 +172,13 @@ main(){
 
 	cd $HOME
 	
-	git clone https://github.com/puchy22/dotfiles $HOME
+	git clone https://github.com/puchy22/dotfiles
 
-	mv $HOME/dotfiles/.config $HOME/.*
-	mv $HOME/dotfiles/Images $HOME/*
+	mv $HOME/.config .config2
+
+	mv $HOME/dotfiles/* $HOME
+	mv $HOME/dotfiles/.* $HOME
+
 	rmdir $HOME/dotfiles
 
 }
