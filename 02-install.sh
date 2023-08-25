@@ -70,8 +70,12 @@ main(){
 	echo "Setting the hosts file..."
 	echo "-----------------------------------------------------"
 
+	echo "# Static table lookup for hostnames." > /etc/hosts
+	echo "# See hosts(5) for details." >> /etc/hosts
 	printf "127.0.0.1\tlocalhost\n" >> /etc/hosts
 	printf "::1\tlocalhost\n" >> /etc/hosts
+	printf "127.0.1.1\tPC-PUCHY.localdomain\tPC-PUCHY\n" >> /etc/hosts
+	echo "" >> /etc/hosts
 
 	# Set the root password
 	echo "-----------------------------------------------------"
@@ -90,7 +94,7 @@ main(){
 	# Extract the UUID of the root crypt partition
 	root_uuid=$(blkid | grep -E '/dev/mapper/RootVG-cryptroot' | awk '{print $2}' | sed 's/"//g' | sed 's/UUID=//g')
 
-	pacman -S --noconfirm efibootmgr lvm2 intel-ucode sudo
+	pacman -Syy --noconfirm efibootmgr lvm2 intel-ucode sudo
 
 	# Setting up the initramfs
 	echo "-----------------------------------------------------"
@@ -136,7 +140,7 @@ main(){
 	echo "Allowing wheel group to use sudo..."
 	echo "-----------------------------------------------------"
 
-	sed -i 's/# %wheel ALL=(ALL:ALL)/%wheel ALL=(ALL:ALL)/g' /etc/sudoers
+	sed -i 's/^# %wheel ALL=(ALL:ALL) ALL$/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
 	# Enable services
 	echo "-----------------------------------------------------"

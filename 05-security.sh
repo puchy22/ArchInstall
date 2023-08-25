@@ -91,10 +91,14 @@ main(){
       "nmap"            # Network exploration tool and security / port scanner
       "wireshark-qt"    # Network protocol analyzer
       "bitwarden"       # Password manager
-		"nftables"        # Firewall
+		"iptables-nft"    # Firewall
 		"clamav"          # Antivirus
 		"john"            # Password cracker
 		"hashcat"         # Password cracker
+		"zaproxy"			# Web application security scanner
+		"hydra"				# Password cracker
+		"traceroute"		# Traceroute utility
+		"exploitdb"			# Offensive Security’s Exploit Database Archive (searchsploit)
    )
 
    # Install the software
@@ -103,7 +107,26 @@ main(){
    echo "Installing the software..."
    echo "-----------------------------------------------------"
 
-   sudo pacman -S --noconfirm "${software[@]}"
+   sudo pacman -Syy --noconfirm "${software[@]}"
+
+	# Prepare the software necesary from AUR
+
+   echo "-----------------------------------------------------"
+   echo "Preparing the software from AUR..."
+   echo "-----------------------------------------------------"
+
+   aur_software=(
+      "whatweb"		# Web scanner
+		"burpsuite"		# Security testing of web applications
+   )
+
+   # Install the software from AUR
+
+   echo "-----------------------------------------------------"
+   echo "Installing the software from AUR..."
+   echo "-----------------------------------------------------"
+
+   paru -Syy --noconfirm "${aur_software[@]}"
 
    # Some configurations
 
