@@ -137,25 +137,25 @@ prepare_disk_cache_luks_on_lvm(){
 	fi
 
 	# LVM setup for SWAP
-	pvcreate ${cache_disk}2
-	vgcreate SwapVG ${cache_disk}2
+	pvcreate ${cache_disk}p2
+	vgcreate SwapVG ${cache_disk}p2
 	lvcreate -l 100%FREE -n cryptswap SwapVG
 
 	# LVM setup for Root
-	pvcreate ${cache_disk}3
+	pvcreate ${cache_disk}p3
 	# Create the physical volumes for the rest of the disks
 	for disk in ${storage_disks[@]}; do
 		pvcreate $disk
 	done
 
 	# Create the volume group for the cache
-	vgcreate RootVG ${cache_disk}3 ${storage_disks[@]}1
+	vgcreate RootVG ${cache_disk}p3 ${storage_disks[@]}1
 
 	# Create the logical volumes for the root, only on the massives disks
 	lvcreate -l 100%PVS -n cryptroot RootVG ${storage_disks[@]}1
 
 	# Create the logical volume for the cache
-	lvcreate --type cache-pool -l 100%PVS -n cryptroot_cache RootVG ${cache_disk}3
+	lvcreate --type cache-pool -l 100%PVS -n cryptroot_cache RootVG ${cache_disk}p3
 
 	# Combine the cache volume with the root volume
 	lvconvert --type cache --cachemode writeback --cachepool RootVG/cryptroot_cache RootVG/cryptroot
@@ -169,13 +169,13 @@ prepare_disk_cache_luks_on_lvm(){
 	systemd-mount --discover /dev/mapper/root /mnt
 
 	if [ $uefi -eq 1 ]; then
-		mkfs.fat -F32 ${cache_disk}1
+		mkfs.fat -F32 ${cache_disk}p1
 	else
-		mkfs.ext4 ${cache_disk}1
+		mkfs.ext4 ${cache_disk}p1
 	fi
 
 	mkdir /mnt/boot
-	systemd-mount ${cache_disk}1 /mnt/boot
+	systemd-mount ${cache_disk}p1 /mnt/boot
 
 }
 
@@ -329,11 +329,11 @@ main(){
 	echo "-----------------------------------------------------"
 
 	# Check if there is one or more disks
-	if [ $(lsblk -dplnx size -o name,size,fstype | grep -Ev "boot|rpmb|loop|iso" | wc -l) -eq 1 ]; then
+	if [ $(lsblk -dplnx size -o name,size,fstype | grep -Ev "sdb|boot|rpmb|loop|iso" | wc -l) -eq 1 ]; then
 		echo "-----------------------------------------------------"
 		echo "There is only one disk."
 		echo "-----------------------------------------------------"
-		selected_disk=$(lsblk -dplnx size -o name,size,fstype | grep -Ev "boot|rpmb|loop|iso" | awk '{print $1}')
+		selected_disk=$(lsblk -dplnx size -o name,size,fstype | grep -Ev "sdb|boot|rpmb|loop|iso" | awk '{print $1}')
 	else
 		echo "-----------------------------------------------------"
 		echo "There are more than one disk. Please select the disk to partition:"
@@ -341,13 +341,13 @@ main(){
 		
 		while true; do
 			echo "Available disks:"
-			lsblk -dplnx size -o name,size,fstype | grep -Ev "boot|rpmb|loop|iso" | tac
+			lsblk -dplnx size -o name,size,fstype | grep -Ev "sdb|boot|rpmb|loop|iso" | tac
 
 			read -p "Enter the name of the disk you want to use: " selected_disk
 
-			if lsblk -dplnx size -o name,size,fstype | grep -Ev "boot|rpmb|loop|iso" | grep -wq "$selected_disk"; then
+			if lsblk -dplnx size -o name,size,fstype | grep -Ev "sdb|boot|rpmb|loop|iso" | grep -wq "$selected_disk"; then
 				# Enter the rest of disks in array
-				rest_disks=($(lsblk -dplnx size -o name,fstype | grep -Ev "boot|rpmb|loop|iso|$selected_disk" | awk '{print $1}'))
+				rest_disks=($(lsblk -dplnx size -o name,fstype | grep -Ev "sdb|boot|rpmb|loop|iso|$selected_disk" | awk '{print $1}'))
 				break
 			else
 				echo "Invalid disk name. Please try again."
@@ -361,6 +361,8 @@ main(){
 	if [ ${#rest_disks[@]} -ne 0 ]; then
 		echo "The rest of the disks are: ${rest_disks[@]}"
 	fi
+
+	sleep 5
 
 	# Wipe all the disks
 	echo "-----------------------------------------------------"
@@ -466,7 +468,7 @@ main(){
 	echo "Copying auto scripts to the new system..."
 	echo "-----------------------------------------------------"
 
-	cp -r /root/archinstall /mnt/root
+	mv /root/ArchInstall /mnt/root
 
 	# Change root into the new system
 	echo "-----------------------------------------------------"

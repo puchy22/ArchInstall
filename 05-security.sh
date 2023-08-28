@@ -12,39 +12,39 @@ configure_firewall(){
 
 	# Flush the current ruleset
 
-	nft flush ruleset
+	sudo nft flush ruleset
 
 	# Create the tables and chains
 
-	nft add table inet my_table
+	sudo nft add table inet my_table
 
-	nft add chain inet my_table my_input '{ type filter hook input priority 0 ; policy drop ; }'
-	nft add chain inet my_table my_forward '{ type filter hook forward priority 0 ; policy drop ; }'
-	nft add chain inet my_table my_output '{ type filter hook output priority 0 ; policy accept ; }'
+	sudo nft add chain inet my_table my_input '{ type filter hook input priority 0 ; policy drop ; }'
+	sudo nft add chain inet my_table my_forward '{ type filter hook forward priority 0 ; policy drop ; }'
+	sudo nft add chain inet my_table my_output '{ type filter hook output priority 0 ; policy accept ; }'
 
-	nft add chain inet my_table my_tcp_chain
-	nft add chain inet my_table my_udp_chain
+	sudo nft add chain inet my_table my_tcp_chain
+	sudo nft add chain inet my_table my_udp_chain
 
 	# Add the rules
 
 	# Related and established connections are accepted
-	nft add rule inet my_table my_input ct state related,established accept
+	sudo nft add rule inet my_table my_input ct state related,established accept
 	# Loopback interface is accepted
-	nft add rule inet my_table my_input iif lo accept
+	sudo nft add rule inet my_table my_input iif lo accept
 	# Invalid connections are dropped
-	nft add rule inet my_table my_input ct state invalid drop
+	sudo nft add rule inet my_table my_input ct state invalid drop
 	# ICMP and IGMP are accepted
-	nft add rule inet my_table my_input meta l4proto ipv6-icmp accept
-	nft add rule inet my_table my_input meta l4proto icmp accept
-	nft add rule inet my_table my_input ip protocol igmp accept
+	sudo nft add rule inet my_table my_input meta l4proto ipv6-icmp accept
+	sudo nft add rule inet my_table my_input meta l4proto icmp accept
+	sudo nft add rule inet my_table my_input ip protocol igmp accept
 	# UDP traffic jump to chain my_udp_chain
-	nft add rule inet my_table my_input meta l4proto udp ct state new jump my_udp_chain
+	sudo nft add rule inet my_table my_input meta l4proto udp ct state new jump my_udp_chain
 	# TCP traffic jump to chain my_tcp_chain
-	nft add rule inet my_table my_input 'meta l4proto tcp tcp flags & (fin|syn|rst|ack) == syn ct state new jump my_tcp_chain'
+	sudo nft add rule inet my_table my_input 'meta l4proto tcp tcp flags & (fin|syn|rst|ack) == syn ct state new jump my_tcp_chain'
 	# Other traffic is dropped
-	nft add rule inet my_table my_input meta l4proto udp reject
-	nft add rule inet my_table my_input meta l4proto tcp reject with tcp reset
-	nft add rule inet my_table my_input counter reject with icmpx port-unreachable
+	sudo nft add rule inet my_table my_input meta l4proto udp reject
+	sudo nft add rule inet my_table my_input meta l4proto tcp reject with tcp reset
+	sudo nft add rule inet my_table my_input counter reject with icmpx port-unreachable
 
 	# Oppening ports example
 
@@ -58,14 +58,14 @@ configure_firewall(){
 	# nft delete rule inet my_table my_tcp_chain handle ?
 
 	# Enable the firewall
-	systemctl enable nftables.service
+	sudo systemctl enable nftables.service
 
 	# All rules are in /etc/nftables.conf
 
-	nft list ruleset > /etc/nftables.conf
+	sudo nft list ruleset > /etc/nftables.conf
 
 	# Reload the firewall
-	systemctl restart nftables.service
+	sudo systemctl restart nftables.service
 }
 
 main(){
@@ -88,17 +88,18 @@ main(){
    # Make a list of the software to install
 
    software=(
-      "nmap"            # Network exploration tool and security / port scanner
-      "wireshark-qt"    # Network protocol analyzer
-      "bitwarden"       # Password manager
-		"iptables-nft"    # Firewall
-		"clamav"          # Antivirus
-		"john"            # Password cracker
-		"hashcat"         # Password cracker
-		"zaproxy"			# Web application security scanner
-		"hydra"				# Password cracker
-		"traceroute"		# Traceroute utility
-		"exploitdb"			# Offensive Security’s Exploit Database Archive (searchsploit)
+    "nmap"            # Network exploration tool and security / port scanner
+    "wireshark-qt"    # Network protocol analyzer
+    "bitwarden"       # Password manager
+    "iptables-nft"    # Firewall
+    "clamav"          # Antivirus
+    "john"            # Password cracker
+    "hashcat"         # Password cracker
+    "zaproxy"			# Web application security scanner
+    "hydra"				# Password cracker
+    "traceroute"		# Traceroute utility
+    "exploitdb"			# Offensive Security’s Exploit Database Archive (searchsploit)
+    "gobuster"  # A directory/file & DNS busting tool.
    )
 
    # Install the software
@@ -117,7 +118,8 @@ main(){
 
    aur_software=(
       "whatweb"		# Web scanner
-		"burpsuite"		# Security testing of web applications
+		  "burpsuite"	# Security testing of web applications
+      "wordlists" # great set of wordlists. In /usr/share/wordlists
    )
 
    # Install the software from AUR
@@ -135,10 +137,10 @@ main(){
    echo "-----------------------------------------------------"
 
    # Enter delay after a failed login attempt
-	sed -i '/^auth/!b;n;n;a\auth optional pam_faildelay.so delay=4000000' /etc/pam.d/system-login
+	sudo sed -i '/^auth/!b;n;n;a\auth optional pam_faildelay.so delay=4000000' /etc/pam.d/system-login
 
 	# Lock the root account
-	passwd -l root
+  sudo passwd -l root
 
    # Question to the user if configure the firewall
 
@@ -176,13 +178,13 @@ main(){
 
 	# Enable the antivirus
 
-	systemctl enable clamav-freshclam.service
-	systemctl enable clamav-daemon.service
+	sudo systemctl enable clamav-freshclam.service
+	sudo systemctl enable clamav-daemon.service
 
 	# Start the antivirus
 
-	systemctl start clamav-freshclam.service
-	systemctl start clamav-daemon.service
+	sudo systemctl start clamav-freshclam.service
+	sudo systemctl start clamav-daemon.service
 
 }
 

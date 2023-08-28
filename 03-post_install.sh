@@ -44,6 +44,11 @@ main(){
    cd $HOME
    sudo pacman -Syy
 
+   # Enable multilib repositories
+
+   #sudo sed -i 's/#[multilib]/[multilib]/g' /etc/pacman.conf
+   #sudo sed -i 's/#Include/Include/g' /etc/pacman.conf  FIX THIS
+
    # Make a list of the software to install
    # https://wiki.archlinux.org/title/List_of_applications
 
@@ -56,6 +61,7 @@ main(){
       "pulseaudio-alsa"       # Pulseaudio to manage ALSA drivers
       "pulseaudio-bluetooth"  # Pulseaudio to manage ALSA drivers
       "pavucontrol"           # Pulseaudio frontend
+      "alsa-utils"            # ALSA utilities
       "haruna"                # Music and video player
       "kitty"			         # Terminal emulator
       "thunar"			         # File manager
@@ -90,12 +96,16 @@ main(){
       "networkmanager-openvpn" # VPN (openvpn)
       "network-manager-applet"   # Network manager applet
       "python"                # Python
+      "npm"
       # LaTeX installation (https://wiki.archlinux.org/title/TeX_Live)
       "tree"                  # Tree view
       "lsd"                   # ls with icons
       "bat"                   # cat with syntax highlight
       "zsh"                   # Shell
-      "zsh-completions"       # ZSH completions
+      "zsh-autosuggestions"   # ZSH command complete
+      "zsh-syntax-highlighting"  # Fish shell like syntax highlighting for Zsh
+      "thefuck"               # Fix commands wrote
+      "fzf"                   # General-purpose command-line fuzzy finder
       "podman"                # Container manager
       "buildah"               # Container builder
       "fuse-overlayfs"        # Container overlay
@@ -178,6 +188,13 @@ main(){
    sudo usermod --add-subuids 100000-165535 --add-subgids 100000-165535 $USER
 
    podman system migrate
+
+   # Configure audio
+   echo "-----------------------------------------------------"
+   echo "Configuring audio..."
+   echo "-----------------------------------------------------"
+
+   amixer sset Master unmute
 
 }
 

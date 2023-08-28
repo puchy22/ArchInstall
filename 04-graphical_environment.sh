@@ -41,6 +41,7 @@ main(){
 				drivers=(
 					"xf86-video-intel"	# Intel drivers
 					"mesa"				# Open source version of OpenGL
+					"lib32-mesa"
 				)
 				kernel_module="i915"
 				break
@@ -52,6 +53,7 @@ main(){
 					"nvidia-utils"		# Nvidia drivers
 					"nvidia-settings"	# Nvidia drivers
 					"nvidia-prime"		# Nvidia drivers
+					"lib32-nvidia-utils"
 				)
 				kernel_module="nvidia nvidia_modeset nvidia_uvm nvidia_drm"
 				break
@@ -124,6 +126,12 @@ main(){
 		"light-locker"				# Screen locker
 		"gtk3"						# GTK3
 		"arc-gtk-theme"			# GTK3 theme
+		"papirus-icon-theme"	# Papirus icon set
+		"glxinfo"
+		"vulkan-icd-loader"		# Vulkan Installable Client Driver (ICD) Loader
+		"vulkan-tools"			# Vulkan Utilities and Tools
+		"neofetch"
+		"imagemagick"			# An image viewing/manipulation program
    )
 
    # Install the software
@@ -163,6 +171,29 @@ main(){
 	echo "-----------------------------------------------------"
 
 	sudo localectl --no-convert set-x11-keymap es pc105 deadtilde
+
+	# Config gtk theme
+
+	echo "-----------------------------------------------------"
+	echo "Setting the gtk theme and icons..."
+	echo "-----------------------------------------------------"
+
+	echo '[Settings]' >> /etc/gtk-3.0/settings.ini
+	echo 'gtk-icon-theme-name = Papirus' >> /etc/gtk-3.0/settings.ini
+	echo 'gtk-theme-name = Arc-Dark' >> /etc/gtk-3.0/settings.ini
+	echo 'gtk-font-name = Mononoki Nerd Fonts 11' >> /etc/gtk-3.0/settings.ini
+
+	# Setting rofi theme
+
+	echo "-----------------------------------------------------"
+	echo "Setting the rofi theme..."
+	echo "-----------------------------------------------------"
+
+	sudo wget https://raw.githubusercontent.com/davatorium/rofi-themes/master/Official%20Themes/Pop-Dark.rasi -O /usr/share/rofi/themes/Pop-Dark.rasi
+
+	# Configuring NVChad
+
+	git clone https://github.com/NvChad/NvChad ~/.config/nvim --depth 1 && nvim
 
 	# Copy the configuration files
 
