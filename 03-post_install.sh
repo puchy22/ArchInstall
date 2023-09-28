@@ -60,6 +60,7 @@ main(){
       "pulseaudio"            # Soundo system
       "pulseaudio-alsa"       # Pulseaudio to manage ALSA drivers
       "pulseaudio-bluetooth"  # Pulseaudio to manage ALSA drivers
+      "blueman"               # Graphical fronted to manage bluetooth
       "pavucontrol"           # Pulseaudio frontend
       "alsa-utils"            # ALSA utilities
       "haruna"                # Music and video player
@@ -197,6 +198,15 @@ main(){
    echo "-----------------------------------------------------"
 
    amixer sset Master unmute
+
+   # Start the bluetooth service
+
+    echo "-----------------------------------------------------"
+    echo "Starting the bluetooth service..."
+    echo "-----------------------------------------------------"
+
+    sudo systemctl enable bluetooth.service
+    sudo systemctl start bluetooth.service
 
 }
 
