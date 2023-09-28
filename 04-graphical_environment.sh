@@ -42,6 +42,13 @@ main(){
 					"xf86-video-intel"	# Intel drivers
 					"mesa"				# Open source version of OpenGL
 					"lib32-mesa"
+          "vulkan-intel"
+          "lib32-vulkan-intel"
+          "intel-media-driver"
+          "libva-utils"
+          "vdpauinfo"
+          "clinfo"
+          "intel-compute-runtime"
 				)
 				kernel_module="i915"
 				break
@@ -54,6 +61,7 @@ main(){
 					"nvidia-settings"	# Nvidia drivers
 					"nvidia-prime"		# Nvidia drivers
 					"lib32-nvidia-utils"
+          "opencl-nvidia"
 				)
 				kernel_module="nvidia nvidia_modeset nvidia_uvm nvidia_drm"
 				break
@@ -63,12 +71,22 @@ main(){
 				# Intel drivers
 				drivers=(
 					"xf86-video-intel"	# Intel drivers
-					"mesa"					# Open source version of OpenGL
+					"mesa"				# Open source version of OpenGL
+					"lib32-mesa"
+          "vulkan-intel"
+          "lib32-vulkan-intel"
+          "intel-media-driver"
+          "libva-utils"
+          "vdpauinfo"
+          "clinfo"
+          "intel-compute-runtime"
 					# Nvidia drivers
 					"nvidia"				# Nvidia drivers
 					"nvidia-utils"		# Nvidia drivers
 					"nvidia-settings"	# Nvidia drivers
-					"nvidia-prime"		# Nvidia script execute
+					"nvidia-prime"		# Nvidia drivers
+					"lib32-nvidia-utils"
+          "opencl-nvidia"
 				)
 				kernel_module="i915 nvidia nvidia_modeset nvidia_uvm nvidia_drm"
 				break
