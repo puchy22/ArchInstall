@@ -109,9 +109,11 @@ main(){
       "podman"                # Container manager
       "buildah"               # Container builder
       "fuse-overlayfs"        # Container overlay
-      "cni-plugins"           # Container networking
+      "netavark"              # Container networking
+      "aardvark-dns"          # DNS for containers
       "podman-compose"        # Container compose
       "slirp4netns"           # Container networking rootless
+      "wmname"                # A utility to set the name of your window manager
 
    )
 
