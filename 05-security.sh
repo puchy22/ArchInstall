@@ -8,61 +8,26 @@ configure_firewall(){
 	echo "Configuring the firewall..."
 	echo "-----------------------------------------------------"
 
-	# Create basic firewall configuration with nftables (https://wiki.archlinux.org/title/Nftables#Single_machine)
+  sudo echo 'table inet my_table {
+    chain my_input {
+      type filter hook input priority filter; policy accept;
+      iif "lo" accept comment "always accept loopback"
+      iifname "wlo1" jump my_input_public
+    }
 
-	# Flush the current ruleset
+    chain my_input_public {
+      ct state { established, related } accept
+      ct state invalid drop
+      udp dport 68 accept
+      tcp dport 68 accept
+      reject comment "all other traffic"
+    }
 
-	sudo nft flush ruleset
-
-	# Create the tables and chains
-
-	sudo nft add table inet my_table
-
-	sudo nft add chain inet my_table my_input '{ type filter hook input priority 0 ; policy drop ; }'
-	sudo nft add chain inet my_table my_forward '{ type filter hook forward priority 0 ; policy drop ; }'
-	sudo nft add chain inet my_table my_output '{ type filter hook output priority 0 ; policy accept ; }'
-
-	sudo nft add chain inet my_table my_tcp_chain
-	sudo nft add chain inet my_table my_udp_chain
-
-	# Add the rules
-
-	# Related and established connections are accepted
-	sudo nft add rule inet my_table my_input ct state related,established accept
-	# Loopback interface is accepted
-	sudo nft add rule inet my_table my_input iif lo accept
-	# Invalid connections are dropped
-	sudo nft add rule inet my_table my_input ct state invalid drop
-	# ICMP and IGMP are accepted
-	sudo nft add rule inet my_table my_input meta l4proto ipv6-icmp accept
-	sudo nft add rule inet my_table my_input meta l4proto icmp accept
-	sudo nft add rule inet my_table my_input ip protocol igmp accept
-	# UDP traffic jump to chain my_udp_chain
-	sudo nft add rule inet my_table my_input meta l4proto udp ct state new jump my_udp_chain
-	# TCP traffic jump to chain my_tcp_chain
-	sudo nft add rule inet my_table my_input 'meta l4proto tcp tcp flags & (fin|syn|rst|ack) == syn ct state new jump my_tcp_chain'
-	# Other traffic is dropped
-	sudo nft add rule inet my_table my_input meta l4proto udp reject
-	sudo nft add rule inet my_table my_input meta l4proto tcp reject with tcp reset
-	sudo nft add rule inet my_table my_input counter reject with icmpx port-unreachable
-
-	# Oppening ports example
-
-	# HTTP
-	# nft add rule inet my_table my_tcp_chain handle 88 tcp dport 80 accept
-	# SSH
-	# nft add rule inet my_table my_tcp_chain handle 22 tcp dport 22 accept
-
-	# Remove open ports example
-	# You have to get de handle number with: nft --handle --numeric list ruleset
-	# nft delete rule inet my_table my_tcp_chain handle ?
-
-	# Enable the firewall
-	sudo systemctl enable nftables.service
-
-	# All rules are in /etc/nftables.conf
-
-	sudo nft list ruleset > /etc/nftables.conf
+    chain my_output {
+      type filter hook output priority filter; policy accept;
+      accept
+    }
+  }' > /etc/nftables.conf
 
 	# Reload the firewall
 	sudo systemctl restart nftables.service
@@ -100,6 +65,7 @@ main(){
     "traceroute"		# Traceroute utility
     "exploitdb"			# Offensive Security’s Exploit Database Archive (searchsploit)
     "gobuster"  # A directory/file & DNS busting tool.
+    "webshells" # A collection of webshells for use in penetration testing
    )
 
    # Install the software
