@@ -66,6 +66,7 @@ main(){
     "exploitdb"			# Offensive Security’s Exploit Database Archive (searchsploit)
     "gobuster"  # A directory/file & DNS busting tool.
     "webshells" # A collection of webshells for use in penetration testing
+    "sqlmap"    # Automatic SQL injection and database takeover tool
    )
 
    # Install the software
